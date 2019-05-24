@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPoint Manipulator", "PowerPoint Manipulator\PowerPoint Manipulator.csproj", "{957D082C-7ED4-47AF-9504-975F5B8E9E6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManipulatorHelper", "ManipulatorHelper\ManipulatorHelper.csproj", "{3CF95CA5-5398-4ACF-98FF-25705FF161F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{957D082C-7ED4-47AF-9504-975F5B8E9E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{957D082C-7ED4-47AF-9504-975F5B8E9E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{957D082C-7ED4-47AF-9504-975F5B8E9E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{957D082C-7ED4-47AF-9504-975F5B8E9E6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CF95CA5-5398-4ACF-98FF-25705FF161F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CF95CA5-5398-4ACF-98FF-25705FF161F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CF95CA5-5398-4ACF-98FF-25705FF161F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CF95CA5-5398-4ACF-98FF-25705FF161F1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {879654FD-3005-48B4-B43E-8431B5C8031C}
+	EndGlobalSection
+EndGlobal

@@ -2,6 +2,7 @@
 using Aspose.Slides.Export;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace ManipulatorHelper
@@ -28,11 +29,24 @@ namespace ManipulatorHelper
         {
             TestData testData = new TestData();
             List<string> respondents = new List<string>() { "AB", "AC", "AD", "EF", "EG" };
-
             List<Slide> slides = new List<Slide>();
-            slides.Add(new Slide { Header = "TestArea1", Questions = new List<string>() { "Question1", "Question2" } });
-            slides.Add(new Slide { Header = "TestArea2", Questions = new List<string>() { "Question1", "Question2", "Question3" } });
-            slides.Add(new Slide { Header = "TestArea3", Questions = new List<string>() { "Question1", "Question2", "Question3" } });
+
+            List<Question> listQuestions1 = new List<Question>();
+            listQuestions1.Add(new Question { Title = "Question1", Responses = new int[] { 4, 4, 5, 4, 1 } });
+            listQuestions1.Add(new Question { Title = "Question2", Responses = new int[] { 2, 3, 5, 4, 4 } });
+            slides.Add(new Slide { Header = "TestArea1", Questions = listQuestions1 });
+
+            List<Question> listQuestions2 = new List<Question>();
+            listQuestions2.Add(new Question { Title = "Question1", Responses = new int[] { 4, 2, 3, 4, 1 } });
+            listQuestions2.Add(new Question { Title = "Question2", Responses = new int[] { 1, 5, 3, 4, 1 } });
+            listQuestions2.Add(new Question { Title = "Question3", Responses = new int[] { 5, 3, 5, 4, 4 } });
+            slides.Add(new Slide { Header = "TestArea2", Questions = listQuestions2 });
+
+            List<Question> listQuestions3 = new List<Question>();
+            listQuestions3.Add(new Question { Title = "Question1", Responses = new int[] { 4, 4, 3, 4, 1 } });
+            listQuestions3.Add(new Question { Title = "Question2", Responses = new int[] { 4, 4, 4, 4, 1 } });
+            listQuestions3.Add(new Question { Title = "Question3", Responses = new int[] { 4, 5, 2, 4, 1 } });
+            slides.Add(new Slide { Header = "TestArea3", Questions = listQuestions3 });
 
             testData.Respondents = respondents;
             testData.Slides = slides;
@@ -47,7 +61,7 @@ namespace ManipulatorHelper
         /// <param name="testData"></param>
         public static void ManipulatePowerPointPresentationWithContent(string presentationWithData_FilePath, TestData testData)
         {
-            string listRespondents = null;                   
+            string listRespondents = null;
             try
             {
                 // Creating a presentation instance
@@ -131,14 +145,35 @@ namespace ManipulatorHelper
                         double[] dblRowsHeights = listDblRowsHeights.ToArray();
                         ITable questionsTable = lastSlide.Shapes.AddTable(56, 100, dblColsWidths, dblRowsHeights);
 
+                        questionsTable.StylePreset = TableStylePreset.NoStyleTableGrid;
+
                         for (int i = 0; i < questionsTable.Rows.Count - 1; i++)
                         {
-                            questionsTable[0, i + 1].TextFrame.Text = slide.Questions[i];
+                            questionsTable[0, i + 1].TextFrame.Text = slide.Questions[i].Title;
                             for (int j = 0; j < questionsTable.Columns.Count - 1; j++)
                             {
                                 questionsTable[j + 1, 0].TextFrame.Text = testData.Respondents[j];
+                                questionsTable[j + 1, i + 1].TextFrame.Text = Convert.ToString(slide.Questions[i].Responses[j]);
                             }
+                        }
 
+                        // Set border format for each cell
+                        foreach (IRow row in questionsTable.Rows)
+                        {
+                            foreach (ICell cell in row)
+                            {
+                                cell.BorderTop.FillFormat.FillType = FillType.Solid;
+                                cell.BorderTop.FillFormat.SolidFillColor.Color = Color.Gray;
+
+                                cell.BorderBottom.FillFormat.FillType = FillType.Solid;
+                                cell.BorderBottom.FillFormat.SolidFillColor.Color = Color.Gray;
+
+                                cell.BorderLeft.FillFormat.FillType = FillType.Solid;
+                                cell.BorderLeft.FillFormat.SolidFillColor.Color = Color.Gray;
+
+                                cell.BorderRight.FillFormat.FillType = FillType.Solid;
+                                cell.BorderRight.FillFormat.SolidFillColor.Color = Color.Gray;
+                            }
                         }
                     }
 

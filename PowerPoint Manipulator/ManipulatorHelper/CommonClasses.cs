@@ -11,6 +11,7 @@ namespace ManipulatorHelper
     public class Slide
     {
         public string Header { get; set; }
+        public double AverageScore { get; set; }
         public List<Question> Questions { get; set; }
     }
 

@@ -28,25 +28,17 @@ namespace ManipulatorHelper
         public static TestData GetTestData()
         {
             TestData testData = new TestData();
-            List<string> respondents = new List<string>() { "AB", "AC", "AD", "EF", "EG" };
+            List<string> respondents = new List<string>() { "AB", "AC", "AD", "EF", "EG", "BA", "BD", "BE", "EF", "EG" };
             List<Slide> slides = new List<Slide>();
 
             List<Question> listQuestions1 = new List<Question>();
-            listQuestions1.Add(new Question { Title = "Question1", Responses = new int[] { 4, 4, 5, 4, 1 } });
-            listQuestions1.Add(new Question { Title = "Question2", Responses = new int[] { 2, 3, 5, 4, 4 } });
-            slides.Add(new Slide { Header = "TestArea1", Questions = listQuestions1 });
 
-            List<Question> listQuestions2 = new List<Question>();
-            listQuestions2.Add(new Question { Title = "Question1", Responses = new int[] { 4, 2, 3, 4, 1 } });
-            listQuestions2.Add(new Question { Title = "Question2", Responses = new int[] { 1, 5, 3, 4, 1 } });
-            listQuestions2.Add(new Question { Title = "Question3", Responses = new int[] { 5, 3, 5, 4, 4 } });
-            slides.Add(new Slide { Header = "TestArea2", Questions = listQuestions2 });
+            for (int i = 0; i < 22; i++)
+            {
+                listQuestions1.Add(new Question { Title = "Question " + (i + 1) + ": This is a sample question for the survey", Responses = new int[] { 4, 4, 5, 4, 1, 4, 4, 5, 4, 2 } });
+            }
 
-            List<Question> listQuestions3 = new List<Question>();
-            listQuestions3.Add(new Question { Title = "Question1", Responses = new int[] { 4, 4, 3, 4, 1 } });
-            listQuestions3.Add(new Question { Title = "Question2", Responses = new int[] { 4, 4, 4, 4, 1 } });
-            listQuestions3.Add(new Question { Title = "Question3", Responses = new int[] { 4, 5, 2, 4, 1 } });
-            slides.Add(new Slide { Header = "TestArea3", Questions = listQuestions3 });
+            slides.Add(new Slide { Header = "TestArea1", AverageScore = 4, Questions = listQuestions1 });
 
             testData.Respondents = respondents;
             testData.Slides = slides;
@@ -77,8 +69,12 @@ namespace ManipulatorHelper
 
                     foreach (var name in testData.Respondents)
                     {
-                        listRespondents += name + "\n";
+                        listRespondents += name + ", ";
                     }
+
+                    //Remove additional trailing characters
+                    listRespondents = listRespondents.Trim();
+                    listRespondents = listRespondents.TrimEnd(',');
 
                     //Modify newly added respondent template slide with content
                     foreach (IShape shp in lastRespondentSlide.Shapes)
@@ -126,6 +122,24 @@ namespace ManipulatorHelper
                             }
                         }
 
+                        //Add Average Table to slide
+                        double[] avgTableColWidth = { 50, 23 };
+                        double[] avgTableRowHeight = { 5 };
+                        ITable avgTable = lastSlide.Shapes.AddTable(50, 100, avgTableColWidth, avgTableRowHeight);
+                        avgTable[0, 0].TextFrame.Text = "Average";
+                        avgTable[1, 0].TextFrame.Text = Convert.ToString(slide.AverageScore);
+                        avgTable[1, 0].FillFormat.FillType = FillType.Solid;
+                        avgTable[1, 0].FillFormat.SolidFillColor.Color = Color.Yellow;
+
+                        avgTable.StylePreset = TableStylePreset.NoStyleNoGrid;
+                        avgTable.Name = "tblAverage";
+
+                        // setting table cells' font height
+                        PortionFormat portionFormat = new PortionFormat();
+                        portionFormat.FontHeight = 7;
+
+                        avgTable.SetTextFormat(portionFormat);
+
                         // Add Question table to slide
                         rowCount = slide.Questions.Count() + 1;
                         colCount = testData.Respondents.Count() + 1;
@@ -135,17 +149,23 @@ namespace ManipulatorHelper
                             listDblRowsHeights.Add(5);
                         }
 
-                        listDblColsWidths.Add(385);
+                        listDblColsWidths.Add(200);
                         for (int col = 1; col < colCount; col++)
                         {
-                            listDblColsWidths.Add(51);
+                            listDblColsWidths.Add(33);
                         }
 
                         double[] dblColsWidths = listDblColsWidths.ToArray();
                         double[] dblRowsHeights = listDblRowsHeights.ToArray();
-                        ITable questionsTable = lastSlide.Shapes.AddTable(56, 100, dblColsWidths, dblRowsHeights);
+                        ITable questionsTable = lastSlide.Shapes.AddTable(50, 120, dblColsWidths, dblRowsHeights);
 
-                        questionsTable.StylePreset = TableStylePreset.NoStyleTableGrid;
+                        questionsTable.StylePreset = TableStylePreset.NoStyleNoGrid;
+                        questionsTable.Name = "tblQuestions";
+                        
+                        ITable shpQuestionsTable = (ITable)lastSlide.Shapes.First(x => x.Name == "tblQuestions");
+
+                        // setting table cells' font height                       
+                        shpQuestionsTable.SetTextFormat(portionFormat);
 
                         for (int i = 0; i < questionsTable.Rows.Count - 1; i++)
                         {
@@ -155,26 +175,7 @@ namespace ManipulatorHelper
                                 questionsTable[j + 1, 0].TextFrame.Text = testData.Respondents[j];
                                 questionsTable[j + 1, i + 1].TextFrame.Text = Convert.ToString(slide.Questions[i].Responses[j]);
                             }
-                        }
-
-                        // Set border format for each cell
-                        foreach (IRow row in questionsTable.Rows)
-                        {
-                            foreach (ICell cell in row)
-                            {
-                                cell.BorderTop.FillFormat.FillType = FillType.Solid;
-                                cell.BorderTop.FillFormat.SolidFillColor.Color = Color.Gray;
-
-                                cell.BorderBottom.FillFormat.FillType = FillType.Solid;
-                                cell.BorderBottom.FillFormat.SolidFillColor.Color = Color.Gray;
-
-                                cell.BorderLeft.FillFormat.FillType = FillType.Solid;
-                                cell.BorderLeft.FillFormat.SolidFillColor.Color = Color.Gray;
-
-                                cell.BorderRight.FillFormat.FillType = FillType.Solid;
-                                cell.BorderRight.FillFormat.SolidFillColor.Color = Color.Gray;
-                            }
-                        }
+                        }                
                     }
 
                     //Delete all template slides

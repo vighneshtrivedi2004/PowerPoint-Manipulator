@@ -54,6 +54,7 @@ namespace ManipulatorHelper
         public static void ManipulatePowerPointPresentationWithContent(string presentationWithData_FilePath, TestData testData)
         {
             string listRespondents = null;
+            int rowSeperatorNo = 3;
             try
             {
                 // Creating a presentation instance
@@ -124,7 +125,7 @@ namespace ManipulatorHelper
 
                         //Add Average Table to slide
                         double[] avgTableColWidth = { 50, 23 };
-                        double[] avgTableRowHeight = { 5 };
+                        double[] avgTableRowHeight = { 4 };
                         ITable avgTable = lastSlide.Shapes.AddTable(50, 100, avgTableColWidth, avgTableRowHeight);
                         avgTable[0, 0].TextFrame.Text = "Average";
                         avgTable[1, 0].TextFrame.Text = Convert.ToString(slide.AverageScore);
@@ -140,13 +141,15 @@ namespace ManipulatorHelper
 
                         avgTable.SetTextFormat(portionFormat);
 
+                        int emptyRowsCount = (slide.Questions.Count() / rowSeperatorNo);
+
                         // Add Question table to slide
-                        rowCount = slide.Questions.Count() + 1;
+                        rowCount = slide.Questions.Count() + 1 + emptyRowsCount;
                         colCount = testData.Respondents.Count() + 1;
 
                         for (int row = 0; row < rowCount; row++)
                         {
-                            listDblRowsHeights.Add(5);
+                            listDblRowsHeights.Add(4);
                         }
 
                         listDblColsWidths.Add(200);
@@ -161,21 +164,30 @@ namespace ManipulatorHelper
 
                         questionsTable.StylePreset = TableStylePreset.NoStyleNoGrid;
                         questionsTable.Name = "tblQuestions";
-                        
+
                         ITable shpQuestionsTable = (ITable)lastSlide.Shapes.First(x => x.Name == "tblQuestions");
 
                         // setting table cells' font height                       
                         shpQuestionsTable.SetTextFormat(portionFormat);
 
-                        for (int i = 0; i < questionsTable.Rows.Count - 1; i++)
+                        int rowSeperatorMod = rowSeperatorNo + 1;
+
+                        for (int i = 1, q = 0; i < questionsTable.Rows.Count; i++)
                         {
-                            questionsTable[0, i + 1].TextFrame.Text = slide.Questions[i].Title;
+                            if (i % rowSeperatorMod == 0)
+                            {
+                                continue;
+                            }
+
+                            questionsTable[0, i].TextFrame.Text = slide.Questions[q].Title;
                             for (int j = 0; j < questionsTable.Columns.Count - 1; j++)
                             {
                                 questionsTable[j + 1, 0].TextFrame.Text = testData.Respondents[j];
-                                questionsTable[j + 1, i + 1].TextFrame.Text = Convert.ToString(slide.Questions[i].Responses[j]);
+                                questionsTable[j + 1, i].TextFrame.Text = Convert.ToString(slide.Questions[q].Responses[j]);
                             }
-                        }                
+
+                            q++;
+                        }
                     }
 
                     //Delete all template slides

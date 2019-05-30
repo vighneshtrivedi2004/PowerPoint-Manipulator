@@ -55,6 +55,7 @@ namespace ManipulatorHelper
         {
             string listRespondents = null;
             int rowSeperatorNo = 3;
+            double customRowHeight = 11.3; //sets row height as 0.4 cm
             try
             {
                 // Creating a presentation instance
@@ -119,13 +120,13 @@ namespace ManipulatorHelper
                             if (shp.Placeholder != null)
                             {
                                 // Change the text of placeholder                           
-                                ((IAutoShape)shp).TextFrame.Text = slide.Header;
+                                ((IAutoShape)shp).TextFrame.Text = slide.Header;                               
                             }
                         }
 
                         //Add Average Table to slide
                         double[] avgTableColWidth = { 50, 23 };
-                        double[] avgTableRowHeight = { 4 };
+                        double[] avgTableRowHeight = { customRowHeight };
                         ITable avgTable = lastSlide.Shapes.AddTable(50, 100, avgTableColWidth, avgTableRowHeight);
                         avgTable[0, 0].TextFrame.Text = "Average";
                         avgTable[1, 0].TextFrame.Text = Convert.ToString(slide.AverageScore);
@@ -149,7 +150,7 @@ namespace ManipulatorHelper
 
                         for (int row = 0; row < rowCount; row++)
                         {
-                            listDblRowsHeights.Add(4);
+                            listDblRowsHeights.Add(customRowHeight);
                         }
 
                         listDblColsWidths.Add(200);
@@ -160,7 +161,7 @@ namespace ManipulatorHelper
 
                         double[] dblColsWidths = listDblColsWidths.ToArray();
                         double[] dblRowsHeights = listDblRowsHeights.ToArray();
-                        ITable questionsTable = lastSlide.Shapes.AddTable(50, 120, dblColsWidths, dblRowsHeights);
+                        ITable questionsTable = lastSlide.Shapes.AddTable(50, 111, dblColsWidths, dblRowsHeights);
 
                         questionsTable.StylePreset = TableStylePreset.NoStyleNoGrid;
                         questionsTable.Name = "tblQuestions";
@@ -168,7 +169,7 @@ namespace ManipulatorHelper
                         ITable shpQuestionsTable = (ITable)lastSlide.Shapes.First(x => x.Name == "tblQuestions");
 
                         // setting table cells' font height                       
-                        shpQuestionsTable.SetTextFormat(portionFormat);
+                        shpQuestionsTable.SetTextFormat(portionFormat);                        
 
                         int rowSeperatorMod = rowSeperatorNo + 1;
 
@@ -187,6 +188,16 @@ namespace ManipulatorHelper
                             }
 
                             q++;
+                        }
+
+                        // Set margin top and bottom as 0 for each cell
+                        foreach (IRow row in questionsTable.Rows)
+                        {
+                            foreach (ICell cell in row)
+                            {
+                                cell.MarginTop = 0;
+                                cell.MarginBottom = 0;
+                            }
                         }
                     }
 
